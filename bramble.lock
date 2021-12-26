@@ -1,0 +1,4 @@
+[URLHashes]
+  "fetch_git https://github.com/brmbl/std.git@v0" = "l5yl6gfaqyahafxjjcyev3j3qiidunv6"
+  "fetch_url https://golang.org/dl/go1.17.2.linux-amd64.tar.gz" = "fm3ujt23vqou74mr5fz5dyygzisllhnq"
+  "fetch_url https://ziglang.org/builds/zig-linux-x86_64-0.9.0-dev.946+6237dc0ab.tar.xz" = "3yhnkjln5ctjemvbvyf7uiff4523lway"

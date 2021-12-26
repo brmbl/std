@@ -1,0 +1,46 @@
+load(static_patchelf="github.com/brmbl/std/static-patchelf")
+load("github.com/brmbl/std")
+load("github.com/brmbl/std/fetchers")
+
+
+def stdenv():
+
+    new_patchelf = fetchers.fetch_url(
+        "https://github.com/NixOS/patchelf/releases/download/0.13/patchelf-0.13.tar.bz2"
+    )
+    """
+    the standard environment
+    """
+    src = fetchers.fetch_url(
+        "http://tarballs.nixos.org/stdenv-linux/x86_64/c5aabb0d603e2c1ea05f5a93b3be82437f5ebf31/bootstrap-tools.tar.xz"
+    )
+    return derivation(
+        "stdenv",
+        builder=std.busybox().out + "/bin/sh",
+        args=["./build_stdenv.sh"],
+        sources=files(["./build_stdenv.sh"]),
+        env=dict(
+            src=src,
+            patchelf=static_patchelf.patchelf(),
+            new_patchelf=new_patchelf,
+            busybox=std.busybox(),
+        ),
+    )
+
+
+def std_derivation(name, builder=None, **kwargs):
+    nix = stdenv()
+    bb = std.busybox()
+
+    PATH = "{}/bin:{}/bin:{}bin".format(nix.out, bb.out, static_patchelf.patchelf())
+    env = kwargs.get("env", {})
+    kwargs.pop("env")
+    env.update(dict(PATH=PATH, nix_seed=nix.out, stdenv=nix.out, busybox=bb.out))
+    if builder == None:
+        builder = nix.out + "/bin/bash"
+    return derivation(
+        name,
+        builder,
+        env=env,
+        **kwargs,
+    )

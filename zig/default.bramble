@@ -1,0 +1,18 @@
+load("github.com/brmbl/std")
+
+
+def hello():
+    return derivation(
+        name="zig",
+        builder=std.busybox().out + "/bin/sh",
+        args=[
+            "-c",
+            """
+            set -e
+            time zig build-exe hello.zig
+            ./hello
+        """,
+        ],
+        sources=files(["./hello.zig"]),
+        env=dict(PATH=std.busybox().out + "/bin:" + std.zig().out + "/bin"),
+    )
